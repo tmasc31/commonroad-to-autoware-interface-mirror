@@ -23,6 +23,9 @@ from commonroad_route_planner.route_planner import RoutePlanner as CRRoutePlanne
 # cr2autoware imports
 from cr2autoware.interfaces.base.route_planner_interface import RoutePlannerInterface
 
+# obacht wrapper
+from obacht_planner_wrapper import ObachtRoutePlannerWrapper
+
 
 class CommonRoadRoutePlanner(RoutePlannerInterface):
     """
@@ -51,9 +54,9 @@ class CommonRoadRoutePlanner(RoutePlannerInterface):
         super().__init__(route_pub=route_pub, logger=logger.get_child("cr_route_planner"), verbose=verbose,
                          lanelet_network=lanelet_network, planning_problem=planning_problem)
 
-        self._planner: CRRoutePlanner = self._initialize_planner(planning_problem=planning_problem)
+        self._planner: ObachtRoutePlannerWrapper = self._initialize_planner(planning_problem=planning_problem)
 
-    def _initialize_planner(self, **kwargs) -> Optional[CRRoutePlanner]:
+    def _initialize_planner(self, **kwargs) -> Optional[ObachtRoutePlannerWrapper]:
         """
         Implements abstract _initialize_planner from base class.
 
@@ -64,7 +67,7 @@ class CommonRoadRoutePlanner(RoutePlannerInterface):
         if "planning_problem" in kwargs:
             _planning_prob = kwargs.get("planning_problem")
             if isinstance(_planning_prob, PlanningProblem):
-                return CRRoutePlanner(lanelet_network=self.lanelet_network, planning_problem=_planning_prob)
+                return ObachtRoutePlannerWrapper(lanelet_network=self.lanelet_network, planning_problem=_planning_prob)
             else:
                 self._logger.warning(f"A planning problem is required for initialization: CR Route Planner not "
                                      f"initialized.")
@@ -84,7 +87,7 @@ class CommonRoadRoutePlanner(RoutePlannerInterface):
         # check if cr route planner has been initialized, otherwise initialize
         if self._planner is None:
             if isinstance(planning_problem, PlanningProblem):
-                self._planner = CRRoutePlanner(lanelet_network=self.lanelet_network, planning_problem=planning_problem)
+                self._planner = ObachtRoutePlannerWrapper(lanelet_network=self.lanelet_network, planning_problem=planning_problem)
             else:
                 raise TypeError(f"CR Route Planner requires planning problem of type PlanningProblem to be initialized")
 
@@ -93,18 +96,15 @@ class CommonRoadRoutePlanner(RoutePlannerInterface):
 
         try:
             if planning_problem:
-                generated_routes = self._planner.update_planning_problem_and_plan_routes(
+                planned_route = self._planner.update_planning_problem_and_plan_routes(
                     planning_problem=planning_problem)
             else:
-                generated_routes = self._planner.plan_routes()
-
-            planned_route = generated_routes.retrieve_first_route()
+                planned_route = self._planner.plan_routes()
 
         except IndexError:
             self._logger.info("<CommonRoadRoutePlanner>: No valid route could be found.")
             return
 
-        self._route_list_lanelet_ids = planned_route.lanelet_ids
         self._reference_path = planned_route.reference_path
 
         # Postprocessing of reference path

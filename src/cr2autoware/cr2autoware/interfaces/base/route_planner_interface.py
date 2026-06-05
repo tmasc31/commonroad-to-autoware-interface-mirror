@@ -35,7 +35,6 @@ class RoutePlannerInterface(ABC):
     :var lanelet_network: lanelet network from CommonRoad scenario
     :var _planner: reference to planner class
     :var _reference_path: reference path
-    :var _route_list_lanelet_ids: list of route lanelet IDs
     :var _is_route_planned: bool to check if route planned
     :var _is_ref_path_published: bool to check if reference path published
     """
@@ -73,8 +72,6 @@ class RoutePlannerInterface(ABC):
 
         # reference path
         self._reference_path: Optional[np.ndarray] = None
-        # list of route lanelet IDs
-        self._route_list_lanelet_ids: Optional[List[int]] = None
 
         # bool route planned
         self._is_route_planned = False
@@ -154,7 +151,7 @@ class RoutePlannerInterface(ABC):
         self._logger.info("<RoutePlannerInterface>: Planning route")
         self._plan(planning_problem, **kwargs)
 
-        if self._reference_path is not None and self._route_list_lanelet_ids:
+        if self._reference_path is not None:
             self._logger.info("<RoutePlannerInterface> valid route and reference path found")
             self._is_route_planned = True
         else:
@@ -165,7 +162,6 @@ class RoutePlannerInterface(ABC):
         """Resets route and reference path (e.g., when desired by the user upon pressing Clear Route)."""
         # reset reference path and route
         self._reference_path = None
-        self._route_list_lanelet_ids = None
 
         self._is_route_planned = False
         # publish empty reference path
