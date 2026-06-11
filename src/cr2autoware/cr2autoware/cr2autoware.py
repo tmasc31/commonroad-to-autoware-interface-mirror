@@ -321,8 +321,9 @@ class Cr2Auto(Node):
                                                    self.callback_group)
 
         # subscribe velocity limit from API
-        self.vel_limit_sub = create_subscription(self, spec_velocity_limit_sub, self.velocity_limit_callback,
-                                                 self.callback_group)
+        # Commented out to send external velocity limit/desired velocity via the route planner
+        # self.vel_limit_sub = create_subscription(self, spec_velocity_limit_sub, self.velocity_limit_callback,
+        #                                          self.callback_group)
 
         # subscribe autoware state
         self.autoware_state_sub = create_subscription(self, spec_autoware_state_sub, self.state_callback,
@@ -620,6 +621,7 @@ class Cr2Auto(Node):
                         # call publisher
                         self.route_planner.publish(point_list, reference_velocities,
                                                    self.scenario_handler.z_coordinate)
+                        self._set_external_velocity_limit(self.route_planner.desired_velocity)
 
                     if self.verbose:
                         self._logger.info("Solving planning problem!")
@@ -1020,7 +1022,8 @@ class Cr2Auto(Node):
             self._logger.info("Set new goal active!")
 
             # plan route and reference path
-            self.route_planner.plan(planning_problem=self.planning_problem)
+            self.route_planner.plan(planning_problem=self.planning_problem,
+                ego_state=self.ego_vehicle_handler.ego_vehicle_state)
 
             # plan velocity profile (-> reference trajectory)
             _goal_pos_cr = map2utm(self.origin_transformation, self.current_goal_msg.pose.position)

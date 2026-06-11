@@ -14,15 +14,17 @@ It just provides the correct coordinate system, which contains a reference path
 -->> So, set the reference path for CR2AW to that of the state machine coord sys!!
 	- implement plan_routes() and update_planning_problem_and_plan_routes() [done]
 	- replace CR planner with state machine! [done]
-	- remove reactive planner creation from state machine, publish/output data properly
+	- remove reactive planner creation from state machine, publish/output data properly [skip, asked Jianing]
+        - should be ok to leave as-is, external reactive planner just needs ref. path
     - skip lanelet representation and go straight to reference path [done]
-    - implement state transitions so that new reference paths are generated
+    - implement state transitions so that new reference paths are generated [done]
 	- bypass velocity smoother, pass desired velocity directly to trajectory planner either:
-        - modified velocity planner that gets reference velocity from state yamls or state machine (respects interface)
-        - bypass velocity planner entirely and get the reference velocity from the route planner (less code)
+        - modified velocity planner that gets reference velocity from state yamls or state machine:
+            - need to set external velocity limit of AW motion velocity smoother to current state's desired velocity
+            (/planning/scenario_planning/max_velocity topic)
 """
 
-import logging
+import copy
 import numpy as np
 import os
 from pathlib import Path
@@ -75,6 +77,9 @@ class ObachtRoutePlannerWrapper:
             print(f"YAML error: {e}")
             return None
 
+        self.state_list = [copy.deepcopy(self.planning_problem.initial_state)]
+        self.state_list[0].time_step = 0
+
         self._planner: BaseStateMachinePlanner = create_state_machine_planner(
             self.scenario,
             self.planning_problem,
@@ -82,15 +87,18 @@ class ObachtRoutePlannerWrapper:
             use_post_opt=False,
             initial_state_name="HEADING",
         )
+        self.current_state = "HEADING"
             
     
-    def update_planning_problem_and_plan_routes(self, **kwargs) -> np.ndarray:
+    def update_planning_problem_and_plan_routes(self, planning_problem, **kwargs) -> np.ndarray:
         # ignore because we are providing our own planning problem from the scenario file
-        return self.plan_routes()
+        return self.plan_routes(**kwargs)
     
-    def plan_routes(self) -> np.ndarray:
+    def plan_routes(self, desired_vel, ego_vehicle_state, **kwargs) -> np.ndarray:
         """
-        Plans routes for every pair of start/goal lanelets. If no goal lanelet ID is given then return a survival route.
+        Plans routes for every pair of start/goal lanelets. Params ignored for
+        OBACHT because route planner has its own method of generating the reference
+        path.
 
         :param lane_change_method: Method for lane changes, e.g. quintic splines
         :param GenerationStrategy: generation strategy for route
@@ -98,4 +106,9 @@ class ObachtRoutePlannerWrapper:
         :return: reference path
         """
 
-        return self._planner.coord_systems[self._planner.current_state].reference
+        # pass current state and apply state transitions as needed
+        self.current_state = self._planner.current_state
+        self.next_state = self._planner.step(ego_vehicle_state, self.state_list)
+
+        return self._planner.coord_systems[self._planner.current_state].reference, self._planner.desired_velocity
+        

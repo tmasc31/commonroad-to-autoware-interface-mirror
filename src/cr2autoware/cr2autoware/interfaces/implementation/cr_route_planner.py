@@ -96,10 +96,10 @@ class CommonRoadRoutePlanner(RoutePlannerInterface):
 
         try:
             if planning_problem:
-                planned_route = self._planner.update_planning_problem_and_plan_routes(
-                    planning_problem=planning_problem)
+                planned_route, self.desired_velocity = self._planner.update_planning_problem_and_plan_routes(
+                    planning_problem=planning_problem, **kwargs)
             else:
-                planned_route = self._planner.plan_routes()
+                planned_route, self.desired_velocity = self._planner.plan_routes(**kwargs)
 
         except IndexError:
             self._logger.info("<CommonRoadRoutePlanner>: No valid route could be found.")

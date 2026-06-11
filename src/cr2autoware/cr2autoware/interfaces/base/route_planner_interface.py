@@ -67,6 +67,9 @@ class RoutePlannerInterface(ABC):
         # CR lanelet network
         self.lanelet_network: LaneletNetwork = lanelet_network
 
+        # Desired velocity (needed for OBACHT integration)
+        self.desired_velocity = 0.0
+
         # initialize planner class (set in child class)
         self._planner: Any = self._initialize_planner(**kwargs)
 
