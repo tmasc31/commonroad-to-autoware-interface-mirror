@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 # This is setup script of cr2autoware to automatically fetch submodules and install pip dependencies
 

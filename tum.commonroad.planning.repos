@@ -2,8 +2,8 @@ repositories:
   # CR2AW interface
   universe/autoware.universe/planning/tum_commonroad_planning/commonroad-autoware-interface:
     type: git
-    url: https://github.com/CommonRoad/commonroad-autoware-interface.git
-    version: master
+    url: https://gitlab.lrz.de/cps/dfg-car
+    version: obacht-cr2aw
   # Scenario designer for map format conversion
   universe/autoware.universe/planning/tum_commonroad_planning/commonroad-scenario-designer:
     type: git
@@ -14,3 +14,7 @@ repositories:
     type: git
     url: https://github.com/CommonRoad/commonroad-reactive-planner.git
     version: master
+  universe/autoware.universe/planning/tum_commonroad_planning/obacht:
+    type: git
+    url: https://gitlab.lrz.de/00000000014AF996/obacht.git
+    version: cr2aw-integration

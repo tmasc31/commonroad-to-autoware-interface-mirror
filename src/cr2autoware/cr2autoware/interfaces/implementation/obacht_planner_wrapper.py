@@ -18,7 +18,7 @@ It just provides the correct coordinate system, which contains a reference path
         - should be ok to leave as-is, external reactive planner just needs ref. path
     - skip lanelet representation and go straight to reference path [done]
     - implement state transitions so that new reference paths are generated [done]
-	- bypass velocity smoother, pass desired velocity directly to trajectory planner either:
+	- bypass velocity smoother, pass desired velocity directly to trajectory planner either: [done]
         - modified velocity planner that gets reference velocity from state yamls or state machine:
             - need to set external velocity limit of AW motion velocity smoother to current state's desired velocity
             (/planning/scenario_planning/max_velocity topic)
@@ -94,7 +94,7 @@ class ObachtRoutePlannerWrapper:
         # ignore because we are providing our own planning problem from the scenario file
         return self.plan_routes(**kwargs)
     
-    def plan_routes(self, desired_vel, ego_vehicle_state, **kwargs) -> np.ndarray:
+    def plan_routes(self, ego_vehicle_state, **kwargs) -> np.ndarray:
         """
         Plans routes for every pair of start/goal lanelets. Params ignored for
         OBACHT because route planner has its own method of generating the reference
@@ -111,4 +111,3 @@ class ObachtRoutePlannerWrapper:
         self.next_state = self._planner.step(ego_vehicle_state, self.state_list)
 
         return self._planner.coord_systems[self._planner.current_state].reference, self._planner.desired_velocity
-        

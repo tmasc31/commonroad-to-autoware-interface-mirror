@@ -1,3 +1,4 @@
 [submodule "obacht"]
 	path = obacht
 	url = https://gitlab.lrz.de/00000000014AF996/obacht.git
+	branch = cr2aw-integration
