@@ -27,13 +27,12 @@ from rclpy.publisher import Publisher
 from std_msgs.msg import Header
 
 # Autoware msgs
-from autoware_auto_perception_msgs.msg import PredictedObjects  # type: ignore
-from autoware_auto_perception_msgs.msg import PredictedObject  # type: ignore
-from autoware_auto_perception_msgs.msg import ObjectClassification  # type: ignore
-from autoware_auto_perception_msgs.msg import PredictedPath  # type: ignore
-from autoware_auto_perception_msgs.msg import TrafficSignalArray  # type: ignore
-from autoware_auto_perception_msgs.msg import TrafficSignal  # type: ignore
-from autoware_auto_perception_msgs.msg import TrafficLight  # type: ignore
+from autoware_perception_msgs.msg import PredictedObjects  # type: ignore
+from autoware_perception_msgs.msg import PredictedObject  # type: ignore
+from autoware_perception_msgs.msg import ObjectClassification  # type: ignore
+from autoware_perception_msgs.msg import PredictedPath  # type: ignore
+from autoware_perception_msgs.msg import TrafficSignalArray  # type: ignore
+from autoware_perception_msgs.msg import TrafficSignal  # type: ignore
 
 # commonroad-io imports
 from commonroad.common.file_reader import CommonRoadFileReader
@@ -93,11 +92,11 @@ class ScenarioHandler(BaseHandler):
     * spec_objects_sub:
         * Description: Subscribes to predicted objects from perception
         * Topic: `/perception/object_recognition/objects`
-        * Message Type: `autoware_auto_perception_msgs.msg.PredictedObject`
+        * Message Type: `autoware_perception_msgs.msg.PredictedObject`
     * spec_traffic_signals_sub:
         * Description: Subscribes to traffic lights from perception
         * Topic: `/perception/traffic_light_recognition/traffic_signals`
-        * Message Type: `autoware_auto_perception_msgs.msg.TrafficSignalArray`
+        * Message Type: `autoware_perception_msgs.msg.TrafficSignalArray`
 
     -------------------
     :var MAP_PATH: path to the map directory containing the map_config.yaml file
@@ -852,7 +851,7 @@ class ScenarioHandler(BaseHandler):
         # process all traffic lights from perception message
         for traffic_signal in last_message.signals:
             # get traffic light ID
-            traffic_signal_id = traffic_signal.map_primitive_id
+            traffic_signal_id = self._get_traffic_signal_id(traffic_signal)
 
             # add traffic light ID to processed list
             processed_traffic_light_ids.append(traffic_signal_id)
@@ -861,7 +860,7 @@ class ScenarioHandler(BaseHandler):
             traffic_light_cr = self.lanelet_network.find_traffic_light_by_id(traffic_signal_id)
 
             # get traffic light element with the highest confidence
-            traffic_light: TrafficLight = self._get_traffic_light(traffic_signal)
+            traffic_light = self._get_traffic_light(traffic_signal)
 
             # get traffic light status, color and shape
             status = traffic_light.status
@@ -912,7 +911,18 @@ class ScenarioHandler(BaseHandler):
                     traffic_light_l2n.traffic_light_cycle = set_traffic_light_cycle(color_inactive)
 
     @staticmethod
-    def _get_traffic_light(traffic_signal: TrafficSignal) -> TrafficLight:
+    def _get_traffic_signal_id(traffic_signal: TrafficSignal) -> int:
+        """
+        Retrieves the traffic signal ID from old and new Autoware message layouts.
+
+        Older messages use map_primitive_id, newer messages use traffic_signal_id.
+        """
+        if hasattr(traffic_signal, "map_primitive_id"):
+            return traffic_signal.map_primitive_id
+        return traffic_signal.traffic_signal_id
+
+    @staticmethod
+    def _get_traffic_light(traffic_signal: TrafficSignal) -> Any:
         """
         Retrieves the traffic light with the highest confidence value from the perception message.
 
@@ -921,15 +931,19 @@ class ScenarioHandler(BaseHandler):
         :param traffic_signal: traffic signal message from perception
         :return TrafficLight: traffic light with the highest confidence
         """
+        if hasattr(traffic_signal, "lights"):
+            traffic_lights = traffic_signal.lights
+        else:
+            traffic_lights = traffic_signal.elements
         highest_conf_val = 0
         highest_conf_idx = 0
-        for i in range(len(traffic_signal.lights)):
-            conf_val = traffic_signal.lights[i].confidence
+        for i in range(len(traffic_lights)):
+            conf_val = traffic_lights[i].confidence
             if conf_val > highest_conf_val:
                 highest_conf_val = conf_val
                 highest_conf_idx = i
 
-        return traffic_signal.lights[highest_conf_idx]
+        return traffic_lights[highest_conf_idx]
 
     def compute_z_coordinate(self, new_initial_pose: Optional[PoseWithCovarianceStamped],
                              new_goal_pose: Optional[PoseStamped]) -> None:

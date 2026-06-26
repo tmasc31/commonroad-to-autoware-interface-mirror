@@ -9,16 +9,16 @@ from std_msgs.msg import String  # type: ignore
 import rosbag2_py  # type: ignore
 
 # Third party
-from autoware_auto_perception_msgs.msg import PredictedObjects  # type: ignore
+from autoware_perception_msgs.msg import PredictedObjects  # type: ignore
 from std_msgs.msg import Header # type: ignore
 from nav_msgs.msg import Odometry # type: ignore
 from geometry_msgs.msg import PoseStamped # type: ignore
 from geometry_msgs.msg import PoseWithCovarianceStamped # type: ignore
 from geometry_msgs.msg import Twist # type: ignore
 from geometry_msgs.msg import Pose # type: ignore
-from autoware_auto_planning_msgs.msg import Trajectory as AWTrajectory  # type: ignore
-from autoware_auto_perception_msgs.msg import PredictedObjects, PredictedObject  # type: ignore
-from autoware_auto_perception_msgs.msg import TrafficSignalArray # type: ignore
+from autoware_planning_msgs.msg import Trajectory as AWTrajectory  # type: ignore
+from autoware_perception_msgs.msg import PredictedObjects, PredictedObject  # type: ignore
+from autoware_perception_msgs.msg import TrafficSignalArray # type: ignore
 
 
 

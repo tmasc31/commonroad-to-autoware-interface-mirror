@@ -16,19 +16,19 @@ To add a new topic publisher, add the specification here first.
 * spec_traj_pub:
     * Description: publish trajectory (Note: We do publish the output trajectory to the planning_validator.)
     * Topic: `/planning/commonroad/trajectory`
-    * Message Type: `autoware_auto_planning_msgs.msg.Trajectory`
+    * Message Type: `autoware_planning_msgs.msg.Trajectory`
 * spec_aw_state_pub:
-    * Description: publish autoware state, see [AutowareStateDocumentation](https://gitlab.com/autowarefoundation/autoware.auto/autoware_auto_msgs/-/blob/master/autoware_auto_system_msgs/msg/AutowareState.idl)
+    * Description: publish autoware state, see [AutowareStateDocumentation](https://gitlab.com/autowarefoundation/autoware.auto/autoware_auto_msgs/-/blob/master/autoware_system_msgs/msg/AutowareState.idl)
     * Topic: `/autoware/state`
-    * Message Type: `autoware_auto_system_msgs.msg.AutowareState`
+    * Message Type: `autoware_system_msgs.msg.AutowareState`
 * spec_vehicle_engage_pub:
     * Description: publish vehicle engage for AW Planning Simulation
     * Topic: `/vehicle/engage`
-    * Message Type: `autoware_auto_vehicle_msgs.msg.Engage`
+    * Message Type: `autoware_vehicle_msgs.msg.Engage`
 * spec_api_engage_pub:
     * Description: publish engage required by node /control/operation_mode_transistion_manager
     * Topic: `/api/autoware/get/engage`
-    * Message Type: `autoware_auto_vehicle_msgs.msg.Engage`
+    * Message Type: `autoware_vehicle_msgs.msg.Engage`
 * spec_routing_state_pub:
     * Description: publish routing state
     * Topic: `/api/routing/state`
@@ -40,7 +40,7 @@ To add a new topic publisher, add the specification here first.
 * spec_velocity_pub:
     * Description: publish reference trajectory to motion velocity smoother
     * Topic: `/planning/scenario_planning/scenario_selector/trajectory`
-    * Message Type: `autoware_auto_planning_msgs.msg.Trajectory`
+    * Message Type: `autoware_planning_msgs.msg.Trajectory`
 * spec_initial_pose_pub:
     * Description: publish initial state of the scenario (replay solution trajectory mode)
     * Topic: `/initialpose3d`
@@ -72,9 +72,9 @@ from geometry_msgs.msg import PoseStamped
 from visualization_msgs.msg import MarkerArray
 
 # Autoware messages
-from autoware_auto_planning_msgs.msg import Trajectory as AWTrajectory  # type: ignore
-from autoware_auto_system_msgs.msg import AutowareState  # type: ignore
-from autoware_auto_vehicle_msgs.msg import Engage  # type: ignore
+from autoware_planning_msgs.msg import Trajectory as AWTrajectory  # type: ignore
+from autoware_system_msgs.msg import AutowareState  # type: ignore
+from autoware_vehicle_msgs.msg import Engage  # type: ignore
 
 # Autoware AdAPI message imports
 from autoware_adapi_v1_msgs.msg import RouteState  # type: ignore
@@ -99,7 +99,7 @@ spec_traj_pub = PublisherSpec(name="/planning/commonroad/trajectory",
                               msg_type=AWTrajectory,
                               depth=1)
 
-# publish autoware state (https://gitlab.com/autowarefoundation/autoware.auto/autoware_auto_msgs/-/blob/master/autoware_auto_system_msgs/msg/AutowareState.idl)
+# publish autoware state (https://gitlab.com/autowarefoundation/autoware.auto/autoware_auto_msgs/-/blob/master/autoware_system_msgs/msg/AutowareState.idl)
 spec_aw_state_pub = PublisherSpec(name="/autoware/state",
                                   msg_type=AutowareState,
                                   depth=1)

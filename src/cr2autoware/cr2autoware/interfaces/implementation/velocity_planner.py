@@ -13,8 +13,8 @@ from rclpy.impl.rcutils_logger import RcutilsLogger
 from builtin_interfaces.msg import Duration
 
 # Autoware.Auto message imports
-from autoware_auto_planning_msgs.msg import TrajectoryPoint
-from autoware_auto_planning_msgs.msg import Trajectory as AWTrajectory
+from autoware_planning_msgs.msg import TrajectoryPoint
+from autoware_planning_msgs.msg import Trajectory as AWTrajectory
 
 # commonroad-dc imports
 from commonroad_dc.geometry.util import compute_orientation_from_polyline
@@ -37,7 +37,7 @@ class VelocityPlanner:
     * _ref_path_pub:
         * Description: Publishes reference path with velocity profile to motion velocity smoother
         * Topic: `/planning/scenario_planning/trajectory_smoothed`
-        * Message Type: `autoware_auto_planning_msgs/Trajectory`
+        * Message Type: `autoware_planning_msgs/Trajectory`
 
     ---------------
     :var _ref_path_pub: reference to ROS2 publisher for reference path

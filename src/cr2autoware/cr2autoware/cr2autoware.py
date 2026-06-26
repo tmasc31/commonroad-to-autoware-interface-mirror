@@ -16,9 +16,9 @@ if os.environ.get('DISPLAY') is not None:
 import matplotlib.pyplot as plt
 
 # Autoware.Auto message imports
-from autoware_auto_planning_msgs.msg import Trajectory as AWTrajectory  # type: ignore
-from autoware_auto_system_msgs.msg import AutowareState  # type: ignore
-from autoware_auto_vehicle_msgs.msg import Engage  # type: ignore
+from autoware_planning_msgs.msg import Trajectory as AWTrajectory  # type: ignore
+from autoware_system_msgs.msg import AutowareState  # type: ignore
+from autoware_vehicle_msgs.msg import Engage  # type: ignore
 
 # Autoware AdAPI message imports
 from autoware_adapi_v1_msgs.msg import RouteState  # type: ignore
@@ -112,19 +112,19 @@ class Cr2Auto(Node):
     * traj_pub:
         * Description: Trajectory of the vehicle.
         * Topic: `/planning/commonroad/trajectory`
-        * Message Type: `autoware_auto_planning_msgs.msg.Trajectory`
+        * Message Type: `autoware_planning_msgs.msg.Trajectory`
     * aw_state_pub:
         * Description: Autoware state.
         * Topic: `/autoware/state`
-        * Message Type: `autoware_auto_system_msgs.msg.AutowareState`
+        * Message Type: `autoware_system_msgs.msg.AutowareState`
     * vehicle_engage_pub:
         * Description: Engage message for Autoware Planning Simulation.
         * Topic: `/vehicle/engage`
-        * Message Type: `autoware_auto_vehicle_msgs.msg.Engage`
+        * Message Type: `autoware_vehicle_msgs.msg.Engage`
     * api_engage_pub:
         * Description: Publish engage message for node `/control/operation_mode_transistion_manager`.
         * Topic: `/api/autoware/get/engage`
-        * Message Type: `autoware_auto_vehicle_msgs.msg.Engage`
+        * Message Type: `autoware_vehicle_msgs.msg.Engage`
     * routing_state_pub:
         * Description: Routing state.
         * Topic: `/api/routing/state`
@@ -136,7 +136,7 @@ class Cr2Auto(Node):
     * velocity_pub:
         * Description: Reference trajectory to motion velocity smoother.
         * Topic: `/planning/scenario_planning/scenario_selector/trajectory`
-        * Message Type: `autoware_auto_planning_msgs.msg.Trajectory`
+        * Message Type: `autoware_planning_msgs.msg.Trajectory`
     * initial_pose_pub:
         * Description: Initial pose of the vehicle.
         * Topic: `/initialpose3d`
@@ -168,7 +168,7 @@ class Cr2Auto(Node):
     * auto_button_sub:
         * Description: Engage message for Autoware
         * Topic: `/autoware/engage`
-        * Message Type: `autoware_auto_vehicle_msgs.msg.Engage`
+        * Message Type: `autoware_vehicle_msgs.msg.Engage`
     * vel_limit_sub:
         * Description: Maximum velocity limit
         * Topic: `/planning/scenario_planning/max_velocity_default`
@@ -176,7 +176,7 @@ class Cr2Auto(Node):
     * autoware_state_sub:
         * Description: Autoware state
         * Topic: `/autoware/state`
-        * Message Type: `autoware_auto_system_msgs.msg.AutowareState`
+        * Message Type: `autoware_system_msgs.msg.AutowareState`
     * routing_state_sub:
         * Description: Routing state
         * Topic: `/api/routing/state`
@@ -299,7 +299,7 @@ class Cr2Auto(Node):
         self.routing_state = RouteState()
 
         # vars to save last messages
-        # https://github.com/tier4/autoware_auto_msgs/blob/tier4/main/autoware_auto_system_msgs/msg/AutowareState.idl
+        # https://github.com/tier4/autoware_auto_msgs/blob/tier4/main/autoware_system_msgs/msg/AutowareState.idl
         self.last_msg_aw_state = 1  # 1 = initializing
         self.last_msg_aw_stamp = self.get_clock().now()
         self.goal_msgs = []

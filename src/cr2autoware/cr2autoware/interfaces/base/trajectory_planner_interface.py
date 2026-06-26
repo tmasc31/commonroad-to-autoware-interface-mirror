@@ -9,10 +9,11 @@ import numpy as np
 # ROS imports
 from rclpy.publisher import Publisher
 from rclpy.impl.rcutils_logger import RcutilsLogger
+from builtin_interfaces.msg import Duration
 
 # Autoware imports
-from autoware_auto_planning_msgs.msg import Trajectory as AWTrajectory  # type: ignore
-from autoware_auto_planning_msgs.msg import TrajectoryPoint  # type: ignore
+from autoware_planning_msgs.msg import Trajectory as AWTrajectory  # type: ignore
+from autoware_planning_msgs.msg import TrajectoryPoint  # type: ignore
 
 # commonroad imports
 from commonroad.scenario.state import TraceState
@@ -204,7 +205,9 @@ class TrajectoryPlannerInterface(ABC):
         # Convert CR Trajectory to AW Trajectory message
         # We publish the trajectory starting from the second state in the state list. The first state (index 0) is
         # simply the current initial state
-        position_list = []
+        output_idx = 0
+        previous_position = None
+        dt = self._traj_planner_params.planning_horizon / max(len(self._cr_state_list) - 1, 1)
         for i in range(1, len(self._cr_state_list)):
             cr_state = self._cr_state_list[i]
 
@@ -214,7 +217,15 @@ class TrajectoryPlannerInterface(ABC):
 
             # Post process trajectory elevation (z coordinate)
             new_point.pose.position.z = elevation
-            position_list.append([cr_state.position[0], cr_state.position[1], elevation])
+            current_position = np.array([cr_state.position[0], cr_state.position[1]], dtype=float)
+            if previous_position is not None and np.linalg.norm(current_position - previous_position) < 1e-3:
+                continue
+            previous_position = current_position
+
+            time_from_start = output_idx * dt
+            sec = int(time_from_start)
+            nanosec = int((time_from_start - sec) * 1e9)
+            new_point.time_from_start = Duration(sec=sec, nanosec=nanosec)
             new_point.pose.orientation = orientation2quaternion(cr_state.orientation)
             new_point.longitudinal_velocity_mps = float(cr_state.velocity)
 
@@ -222,6 +233,7 @@ class TrajectoryPlannerInterface(ABC):
             # new_point.front_wheel_angle_rad = states[i].steering_angle
             new_point.acceleration_mps2 = float(cr_state.acceleration)
             aw_traj.points.append(new_point)
+            output_idx += 1
 
         return aw_traj
 

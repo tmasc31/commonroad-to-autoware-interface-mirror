@@ -24,7 +24,7 @@ To add a new topic subscription, add the specification here first.
 * spec_auto_button_sub:
     * Description: subscribe autoware engage message
     * Topic: `/autoware/engage`
-    * Message Type: `autoware_auto_vehicle_msgs.msg.Engage`
+    * Message Type: `autoware_vehicle_msgs.msg.Engage`
 * spec_velocity_limit_sub:
     * Description: subscribe velocity limit from API (Note: Here we directly use the value from the API velocity limit
     setter in RVIZ.)
@@ -37,7 +37,7 @@ To add a new topic subscription, add the specification here first.
 * spec_autoware_state_sub:
     * Description: subscribe autoware state
     * Topic: `/autoware/state`
-    * Message Type: `autoware_auto_system_msgs.msg.AutowareState`
+    * Message Type: `autoware_system_msgs.msg.AutowareState`
 * spec_odometry:
     * Description: subscribe current state from odometry (kinematic state)
     * Topic: `/localization/kinematic_state`
@@ -49,7 +49,7 @@ To add a new topic subscription, add the specification here first.
 * spec_objects_sub:
     * Description: subscribe predicted objects from perception
     * Topic: `/perception/object_recognition/objects`
-    * Message Type: `autoware_auto_perception_msgs.msg.PredictedObjects`
+    * Message Type: `autoware_perception_msgs.msg.PredictedObjects`
 """
 
 # ROS messages
@@ -59,11 +59,11 @@ from geometry_msgs.msg import AccelWithCovarianceStamped # type: ignore
 from nav_msgs.msg import Odometry # type: ignore
 
 # Autoware messages
-from autoware_auto_vehicle_msgs.msg import Engage  # type: ignore
-from autoware_auto_system_msgs.msg import AutowareState  # type: ignore
-from autoware_auto_perception_msgs.msg import PredictedObjects  # type: ignore
-from autoware_auto_perception_msgs.msg import TrafficSignalArray  # type: ignore
-from autoware_auto_planning_msgs.msg import Trajectory # type: ignore
+from autoware_vehicle_msgs.msg import Engage  # type: ignore
+from autoware_system_msgs.msg import AutowareState  # type: ignore
+from autoware_perception_msgs.msg import PredictedObjects  # type: ignore
+from autoware_perception_msgs.msg import TrafficSignalArray  # type: ignore
+from autoware_planning_msgs.msg import Trajectory # type: ignore
 
 # Autoware AdAPI message imports
 from autoware_adapi_v1_msgs.msg import RouteState  # type: ignore

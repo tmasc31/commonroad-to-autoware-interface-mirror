@@ -94,10 +94,10 @@ from commonroad.geometry.shape import Shape, Rectangle, Circle, Polygon
 
 
 # Third party
-from autoware_auto_planning_msgs.msg import Trajectory as AWTrajectory  # type: ignore
-from autoware_auto_planning_msgs.msg import TrajectoryPoint  # type: ignore
-from autoware_auto_perception_msgs.msg import PredictedObjects, ObjectClassification, PredictedPath  # type: ignore
-from autoware_auto_perception_msgs.msg import TrafficSignalArray # type: ignore
+from autoware_planning_msgs.msg import Trajectory as AWTrajectory  # type: ignore
+from autoware_planning_msgs.msg import TrajectoryPoint  # type: ignore
+from autoware_perception_msgs.msg import PredictedObjects, ObjectClassification, PredictedPath  # type: ignore
+from autoware_perception_msgs.msg import TrafficSignalArray # type: ignore
 from geometry_msgs.msg import Twist # type: ignore
 from geometry_msgs.msg import Pose # type: ignore
 from geometry_msgs.msg import Vector3 # type: ignore

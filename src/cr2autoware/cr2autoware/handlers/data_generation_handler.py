@@ -24,10 +24,10 @@ from geometry_msgs.msg import Pose # type: ignore
 from std_msgs.msg import String # type: ignore
 
 # Autoware msgs
-from autoware_auto_perception_msgs.msg import PredictedObjects  # type: ignore
-from autoware_auto_planning_msgs.msg import Trajectory as AWTrajectory  # type: ignore
-from autoware_auto_perception_msgs.msg import PredictedObjects, PredictedObject  # type: ignore
-from autoware_auto_perception_msgs.msg import TrafficSignalArray  # type: ignore
+from autoware_perception_msgs.msg import PredictedObjects  # type: ignore
+from autoware_planning_msgs.msg import Trajectory as AWTrajectory  # type: ignore
+from autoware_perception_msgs.msg import PredictedObjects, PredictedObject  # type: ignore
+from autoware_perception_msgs.msg import TrafficSignalArray  # type: ignore
 
 # cr2autoware
 from cr2autoware.handlers.base import BaseHandler
@@ -67,11 +67,11 @@ class DataGenerationHandler(BaseHandler):
     * _reference_trajectory_subscriber:
         * Description: Reference trajectory with smoothed velocity profile
         * Topic: `/planning/scenario_planning/trajectory_smoothed`
-        * Message Type: `autoware_auto_planning_msgs.msg.Trajectory`
+        * Message Type: `autoware_planning_msgs.msg.Trajectory`
     * _planned_trajectory_subscriber:
         * Description: Planned trajectory
         * Topic: `/planning/scenario_planning/trajectory`
-        * Message Type: `autoware_auto_planning_msgs.msg.Trajectory`
+        * Message Type: `autoware_planning_msgs.msg.Trajectory`
     * _driven_trajectory_subscriber:
         * Description: Driven trajectory from localization
         * Topic: `/localization/kinematic_state`
@@ -79,11 +79,11 @@ class DataGenerationHandler(BaseHandler):
     * _predicted_objects_subscriber:
         * Description: Predicted objects
         * Topic: `/perception/object_recognition/objects`
-        * Message Type: `autoware_auto_perception_msgs.msg.PredictedObjects`
+        * Message Type: `autoware_perception_msgs.msg.PredictedObjects`
     * _traffic_lights_subscriber:
         * Description: Traffic lights
         * Topic: `/perception/traffic_light_recognition/traffic_signals`
-        * Message Type: `autoware_auto_perception_msgs.msg.TrafficSignalArray`
+        * Message Type: `autoware_perception_msgs.msg.TrafficSignalArray`
 
     -------------------
     :var _command_status: command status for the saver
@@ -301,7 +301,7 @@ class DataGenerationHandler(BaseHandler):
         self._writer.create_topic(
             rosbag2_py.TopicMetadata(
                 name="/planning/scenario_planning/trajectory_smoothed",
-                type="autoware_auto_planning_msgs/msg/Trajectory",
+                type="autoware_planning_msgs/msg/Trajectory",
                 serialization_format="cdr"
             )
         )
@@ -309,7 +309,7 @@ class DataGenerationHandler(BaseHandler):
         self._writer.create_topic(
             rosbag2_py.TopicMetadata(
                 name="/planning/scenario_planning/trajectory",
-                type="autoware_auto_planning_msgs/msg/Trajectory",
+                type="autoware_planning_msgs/msg/Trajectory",
                 serialization_format="cdr"
             )
         )
@@ -325,7 +325,7 @@ class DataGenerationHandler(BaseHandler):
         self._writer.create_topic(
             rosbag2_py.TopicMetadata(
                 name="/perception/object_recognition/objects",
-                type="autoware_auto_perception_msgs/msg/PredictedObjects",
+                type="autoware_perception_msgs/msg/PredictedObjects",
                 serialization_format="cdr"
             )
         )
@@ -333,7 +333,7 @@ class DataGenerationHandler(BaseHandler):
         self._writer.create_topic(
             rosbag2_py.TopicMetadata(
                 name="/perception/traffic_light_recognition/traffic_signals",
-                type="autoware_auto_perception_msgs/msg/TrafficSignalArray",
+                type="autoware_perception_msgs/msg/TrafficSignalArray",
                 serialization_format="cdr"
             )
         )
