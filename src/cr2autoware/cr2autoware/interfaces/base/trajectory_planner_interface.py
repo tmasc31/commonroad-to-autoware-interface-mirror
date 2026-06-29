@@ -85,6 +85,9 @@ class TrajectoryPlannerInterface(ABC):
         # store previous CR trajectory state list
         self._prev_state_list: Optional[List[TraceState]] = None
 
+        # store previous Autoware trajectory that passed basic message validation
+        self._prev_aw_trajectory: Optional[AWTrajectory] = None
+
     @property
     def cr_state_list(self) -> Optional[List[TraceState]]:
         """
@@ -235,6 +238,16 @@ class TrajectoryPlannerInterface(ABC):
             aw_traj.points.append(new_point)
             output_idx += 1
 
+        if len(aw_traj.points) < 2:
+            self._logger.warn(
+                f"Generated trajectory has invalid point size ({len(aw_traj.points)}). "
+                "Publishing previous valid trajectory if available."
+            )
+            if self._prev_aw_trajectory is not None:
+                return self._prev_aw_trajectory
+            return AWTrajectory()
+
+        self._prev_aw_trajectory = aw_traj
         return aw_traj
 
     def publish(self, origin_transformation: List, elevation: float) -> None:
