@@ -43,7 +43,7 @@ print_progress "<CR2Autoware>: Installing commonroad-scenario-designer..." -n
 pip install .
 print_progress "Done" -n
 
-cd ../reactive-planner
+cd ../commonroad-reactive-planner
 print_progress "<CR2Autoware>: Installing commonroad-reactive-planner..." -n
 pip install .
 print_progress "Done" -n
