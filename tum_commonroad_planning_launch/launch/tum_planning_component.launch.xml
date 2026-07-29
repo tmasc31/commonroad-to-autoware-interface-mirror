@@ -14,7 +14,7 @@
   <arg name="common_param_path" default="$(var common_config_path)/common.param.yaml"/>
   <arg name="nearest_search_param_path" default="$(var common_config_path)/nearest_search.param.yaml"/>
   <arg name="smoother_type" default="JerkFiltered" description="options: JerkFiltered, L2, Analytical, Linf(Unstable)"/>
-  <arg name="smoother_type_param_path" default="$(var common_config_path)/motion_velocity_smoother/$(var smoother_type).param.yaml"/>
+  <arg name="smoother_type_param_path" default="$(var common_config_path)/autoware_velocity_smoother/$(var smoother_type).param.yaml"/>
 
   <!-- planning validator params-->
   <arg name="planning_validator_param_path" default="$(var common_config_path)/planning_validator/planning_validator.param.yaml"/>
@@ -27,7 +27,7 @@
   <arg name="tum_planning_launch_param_path" default="$(find-pkg-share tum_planning_launch)/config" description="tum_planning_launch parameter path"/>
   
   <!-- For the motion velocity smoother, we use the adapted param file from tum_launch/config-->
-  <arg name="motion_velocity_smoother_param_path" default="$(var tum_planning_launch_param_path)/motion_velocity_smoother.param.yaml"/>
+  <arg name="motion_velocity_smoother_param_path" default="$(var tum_planning_launch_param_path)/autoware_velocity_smoother.param.yaml"/>
   
   <!-- Global parameters -->
   <arg name="use_sim_time" default="false" description="use_sim_time"/>
@@ -61,12 +61,12 @@
       <!-- The mission planner is required for the lane departure checks of -->
       <!-- the node control/trajectory_follower/lane_departure_checker-->
       <group>
-        <include file="$(find-pkg-share mission_planner)/launch/mission_planner.launch.xml">
+        <include file="$(find-pkg-share autoware_mission_planner)/launch/mission_planner.launch.xml">
           <arg name="mission_planner_param_path" value="$(var mission_planner_param_path)"/>
         </include>
       </group>
       <group>
-        <include file="$(find-pkg-share mission_planner)/launch/goal_pose_visualizer.launch.xml"/>
+        <include file="$(find-pkg-share autoware_mission_planner)/launch/goal_pose_visualizer.launch.xml"/>
       </group>
     </group>
 
@@ -78,7 +78,7 @@
         <group>
           <set_remap from="~/input/trajectory" to="/planning/scenario_planning/scenario_selector/trajectory"/>
           <set_remap from="~/output/trajectory" to="/planning/scenario_planning/trajectory_smoothed"/>
-          <include file="$(find-pkg-share motion_velocity_smoother)/launch/motion_velocity_smoother.launch.xml">
+          <include file="$(find-pkg-share autoware_velocity_smoother)/launch/velocity_smoother.launch.xml">
             <arg name="smoother_type" value="$(var smoother_type)"/>
             <arg name="common_param_path" value="$(var common_param_path)"/>
             <arg name="nearest_search_param_path" value="$(var nearest_search_param_path)"/>
@@ -92,7 +92,7 @@
     <!-- AW.Universe: planning validator -->
     <!-- if planning validator is not launched, the system error monitor returns "Stale" for the trajectory validation topics-->
     <group>
-      <include file="$(find-pkg-share planning_validator)/launch/planning_validator.launch.xml">
+      <include file="$(find-pkg-share autoware_planning_validator)/launch/planning_validator.launch.xml">
         <arg name="input_trajectory" value="/planning/commonroad/trajectory"/>
         <arg name="output_trajectory" value="/planning/scenario_planning/trajectory"/>
         <arg name="planning_validator_param_path" value="$(var planning_validator_param_path)"/>
