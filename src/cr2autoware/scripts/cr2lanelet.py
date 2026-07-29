@@ -2,7 +2,7 @@ import os
 from commonroad.common.file_reader import CommonRoadFileReader
 from lxml import etree
 from crdesigner.map_conversion.lanelet2.cr2lanelet import CR2LaneletConverter
-from crdesigner.config.lanelet2_config import lanelet2_config
+from crdesigner.common.config.lanelet2_config import lanelet2_config
 import utm
 import yaml
 
@@ -11,8 +11,8 @@ import yaml
 # commonroad_to_lanelet(input_path, output_name, proj)
 
 # Change basis_path and map_name here
-basis_path = "/home/andrii/autoware/src/universe/autoware.universe/planning/tum_commonroad_planning/dfg-car/src/cr2autoware/test_solution/"
-map_name = "usa_peach-1_1_t-1" # without .xml
+basis_path = "/home/thecubicjedi/TUM/edgar_practical/dfg-car/obacht/scenarios/"
+map_name = "bus_stop_bay" # without .xml
 
 
 simple_cr_scenario_path = basis_path + map_name + "/" + map_name + ".xml"
