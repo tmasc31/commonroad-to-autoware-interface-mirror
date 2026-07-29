@@ -322,6 +322,7 @@ class Cr2Auto(Node):
 
         # subscribe velocity limit from API
         # Commented out to send external velocity limit/desired velocity via the route planner
+        # so that they are set depending on the OBACHT state machine state
         # self.vel_limit_sub = create_subscription(self, spec_velocity_limit_sub, self.velocity_limit_callback,
         #                                          self.callback_group)
 

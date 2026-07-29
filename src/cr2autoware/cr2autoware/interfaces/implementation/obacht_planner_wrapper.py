@@ -1,29 +1,3 @@
-"""
-What does the state machine planner actually do?
-- self._get_departing_coord_system() # only for bay scenario, chosen based on vel
-- planner, config = self._create_planner() # reactive planner (adapted)
-- planner.set_desired_velocity() or planner.set_desired_lon_position() (when stopping)
-- next_state = self._plan_and_optimize()
-- change state (of state machine) if conditions met (head -> arrive, arrive -> stop/before stop, before stop -> stop; stop -> depart is done in step())
-- state transitions are done via distance threshold/stopped counter checks!
-- next_step (what step() returns) is a CR state! not a state machine state!
-
-
-state machine planner does not output an explicit lanelet sequence/route generator.
-It just provides the correct coordinate system, which contains a reference path
--->> So, set the reference path for CR2AW to that of the state machine coord sys!!
-	- implement plan_routes() and update_planning_problem_and_plan_routes() [done]
-	- replace CR planner with state machine! [done]
-	- remove reactive planner creation from state machine, publish/output data properly [skip, asked Jianing]
-        - should be ok to leave as-is, external reactive planner just needs ref. path
-    - skip lanelet representation and go straight to reference path [done]
-    - implement state transitions so that new reference paths are generated [done]
-	- bypass velocity smoother, pass desired velocity directly to trajectory planner either: [done]
-        - modified velocity planner that gets reference velocity from state yamls or state machine:
-            - need to set external velocity limit of AW motion velocity smoother to current state's desired velocity
-            (/planning/scenario_planning/max_velocity topic)
-"""
-
 import copy
 import numpy as np
 import os
@@ -51,6 +25,16 @@ from typing import List, Union
 
 
 class ObachtRoutePlannerWrapper:
+    """
+    This class acts as an intermediate between the main cr2autoware.py script and
+    the OBACHT Route Planner. It implements the functions cr2autoware.py expects
+    from a Route Planner, implementing the required functions so that the existing
+    higher level planner wrapper CommonRoadRoutePlanner (cr_route_planner.py) can use it
+    (instead of the RoutePlanner from the common-road-route-planner package). It sets up
+    the route planner initial state with the scenario data from the scenario configured
+    in obacht/configurations/scenario.yaml.
+    """
+
     def __init__(self, **kwargs):
         """
         Initialization of the Obacht Planner Wrapper
@@ -96,17 +80,17 @@ class ObachtRoutePlannerWrapper:
     
     def plan_routes(self, ego_vehicle_state, **kwargs) -> np.ndarray:
         """
-        Plans routes for every pair of start/goal lanelets. Params ignored for
-        OBACHT because route planner has its own method of generating the reference
-        path.
+        Generates a reference path for the path planning problem given the
+        current vehicle state.
 
-        :param lane_change_method: Method for lane changes, e.g. quintic splines
-        :param GenerationStrategy: generation strategy for route
+        :param ego_vehicle_state: Current vehicle state
 
-        :return: reference path
+        :return: reference path, desired velocity for current state machine state
         """
 
         # pass current state and apply state transitions as needed
+        # FIXME: this is called every time a new goal position is set,
+        # so desired velocity is not updated as the state machine evolves!
         self.current_state = self._planner.current_state
         self.next_state = self._planner.step(ego_vehicle_state, self.state_list)
 
